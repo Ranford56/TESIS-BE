@@ -1,10 +1,14 @@
-from fastapi import FastAPI, Depends, HTTPException
+import base64
+import os
+from fastapi import FastAPI, Depends, HTTPException, UploadFile
 from typing import List
+from fastapi.params import File
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 import crud
 from database import SessionLocal
 import schemas
+from azure.storage.blob import BlobServiceClient
 
 app = FastAPI()
 
@@ -24,6 +28,8 @@ def get_db():
         yield db
     finally:
         db.close()
+
+service = BlobServiceClient.from_connection_string(os.getenv('BLOB_STORAGE_CONN_STRING'))
 
 @app.post("/contratantes/", response_model=schemas.Contratante)
 def crear_contratante(contratante: schemas.ContratanteCreate, db: Session = Depends(get_db)):
@@ -67,3 +73,24 @@ def leer_caso(caso_id: int, db: Session = Depends(get_db)):
     if db_caso is None:
         raise HTTPException(status_code=404, detail="Caso no encontrado")
     return db_caso
+
+@app.get("/blob/")
+def get_blob(blob_name: str):
+    try:
+        blob_client = service.get_blob_client(container="insurance", blob=blob_name)
+        blob_data = blob_client.download_blob().readall()
+        return {"blob_name": blob_name, "data": base64.b64encode(blob_data).decode('utf-8')}
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Blob no encontrado: {str(e)}")
+
+@app.post("/blob/upload")
+async def upload_blob(blob_name: str, file: UploadFile = File(...)):
+    try:
+        blob_client = service.get_blob_client(container="insurance", blob=blob_name)
+        file_content = await file.read()
+        
+        # Upload the file content directly (as bytes) to Azure Blob Storage
+        blob_client.upload_blob(file_content, overwrite=True)
+        return {"message": "Archivo subido exitosamente", "blob_name": blob_name}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al subir el archivo: {str(e)}")
