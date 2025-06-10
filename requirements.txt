@@ -5,3 +5,4 @@ python-multipart
 pyodbc
 pymssql
 azure-storage-blob
+dotenv
