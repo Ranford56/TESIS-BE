@@ -12,7 +12,7 @@ from azure.storage.blob import BlobServiceClient
 
 app = FastAPI()
 
-origins = ['*']
+origins = ['https://purple-mud-08db9870f.6.azurestaticapps.net/']
 
 app.add_middleware(
     CORSMiddleware,
