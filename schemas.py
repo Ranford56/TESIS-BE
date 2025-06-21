@@ -7,13 +7,11 @@ class ContratanteBase(BaseModel):
     tipo_identificacion: str
     numero_identificacion: str
     nombre_contratante: str
-    residencia: str
 
 class AseguradoBase(BaseModel):
     tipo_identificacion: str
     numero_identificacion: str
     nombre_asegurado: str
-    residencia: str
 
 class VehiculoBase(BaseModel):
     placa: str
@@ -44,7 +42,7 @@ class CasoBase(BaseModel):
     detalles_incidente: str
     danos_visibles: str
     ya_reportado: bool
-    numero_poliza: str
+    numero_poliza: Optional[str]
     aseguradora: str
 
 class CasoCreate(CasoBase):
