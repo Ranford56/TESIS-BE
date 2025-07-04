@@ -1,4 +1,5 @@
 import base64
+import azure.functions as func
 import os
 from fastapi import FastAPI, Depends, HTTPException, UploadFile
 from typing import List
@@ -30,6 +31,10 @@ def get_db():
         db.close()
 
 service = BlobServiceClient.from_connection_string(os.getenv('BLOB_STORAGE_CONN_STRING'))
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
 
 @app.post("/contratantes/", response_model=schemas.Contratante)
 def crear_contratante(contratante: schemas.ContratanteCreate, db: Session = Depends(get_db)):
@@ -94,3 +99,6 @@ async def upload_blob(blob_name: str, file: UploadFile = File(...)):
         return {"message": "Archivo subido exitosamente", "blob_name": blob_name}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al subir el archivo: {str(e)}")
+
+async def main(req: func.HttpRequest, context: func.Context) -> func.HttpResponse:
+    return await func.AsgiMiddleware(app).handle_async(req, context)

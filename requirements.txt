@@ -6,3 +6,4 @@ pyodbc
 pymssql
 azure-storage-blob
 dotenv
+azure-functions
