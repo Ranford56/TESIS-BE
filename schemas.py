@@ -24,6 +24,10 @@ class DocumentoBase(BaseModel):
     ruta_archivo: str
     id_caso: int
 
+class AseguradorBase(BaseModel):
+    nombre: str
+
+
 # Esquemas para creación
 class ContratanteCreate(ContratanteBase):
     pass
@@ -35,6 +39,9 @@ class VehiculoCreate(VehiculoBase):
     pass
 
 class DocumentoCreate(DocumentoBase):
+    pass
+
+class AseguradorCreate(AseguradorBase):
     pass
 
 class CasoBase(BaseModel):
@@ -68,6 +75,11 @@ class Vehiculo(VehiculoBase):
         orm_mode = True
 
 class Documento(DocumentoBase):
+    id: int
+    class Config:
+        orm_mode = True
+
+class Asegurador(AseguradorBase):
     id: int
     class Config:
         orm_mode = True

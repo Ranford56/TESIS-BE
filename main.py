@@ -54,6 +54,15 @@ def listar_asegurados(skip: int = 0, limit: int = 100, db: Session = Depends(get
     asegurados = crud.get_asegurados(db, skip=skip, limit=limit)
     return asegurados
 
+@app.post("/aseguradores/", response_model=schemas.Asegurador)
+def crear_asegurador(asegurador: schemas.AseguradorCreate, db: Session = Depends(get_db)):
+    return crud.create_asegurador(db=db, asegurador=asegurador)
+
+@app.get("/aseguradores/", response_model=List[schemas.Asegurador])
+def listar_aseguradores(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    aseguradores = crud.get_aseguradores(db, skip=skip, limit=limit)
+    return aseguradores
+
 @app.post("/vehiculos/", response_model=schemas.Vehiculo)
 def crear_vehiculo(vehiculo: schemas.VehiculoCreate, db: Session = Depends(get_db)):
     return crud.create_vehiculo(db=db, vehiculo=vehiculo)

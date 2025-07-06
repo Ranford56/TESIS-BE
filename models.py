@@ -45,6 +45,15 @@ class Documento(Base):
 
     caso = relationship("Caso", back_populates="documentos")
 
+class Asegurador(Base):
+    __tablename__ = "aseguradores"
+
+    id = Column(Integer, primary_key=True, index=True)
+    nombre = Column(String(255), unique=True, index=True)
+
+    casos = relationship("Caso", secondary="caso_asegurador", back_populates="aseguradores")
+
+
 class Caso(Base):
     __tablename__ = "casos"
 
@@ -54,12 +63,13 @@ class Caso(Base):
     danos_visibles = Column(Text)
     ya_reportado = Column(Boolean)
     numero_poliza = Column(String(255))
-    aseguradora = Column(String(255))
 
     contratantes = relationship("Contratante", secondary="caso_contratante", back_populates="casos")
     asegurados = relationship("Asegurado", secondary="caso_asegurado", back_populates="casos")
     vehiculos = relationship("Vehiculo", secondary="caso_vehiculo", back_populates="casos")
     documentos = relationship("Documento", back_populates="caso")
+    aseguradores = relationship("Asegurador", secondary="caso_asegurador", back_populates="casos")
+
 
 class CasoContratante(Base):
     __tablename__ = "caso_contratante"
@@ -78,3 +88,9 @@ class CasoVehiculo(Base):
 
     id_caso = Column(Integer, ForeignKey("casos.id"), primary_key=True)
     id_vehiculo = Column(Integer, ForeignKey("vehiculos.id"), primary_key=True)
+
+class CasoAsegurador(Base):
+    __tablename__ = "caso_asegurador"
+
+    id_caso = Column(Integer, ForeignKey("casos.id"), primary_key=True)
+    id_asegurador = Column(Integer, ForeignKey("aseguradores.id"), primary_key=True)

@@ -59,6 +59,20 @@ def create_documento(db: Session, documento: schemas.DocumentoCreate):
     db.refresh(db_documento)
     return db_documento
 
+# Operaciones para Aseguradores
+def get_aseguradores(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Asegurador).order_by(models.Asegurador.id).offset(skip).limit(limit).all()
+
+def get_asegurador(db: Session, asegurador_id: int):
+    return db.query(models.Asegurador).filter(models.Asegurador.id == asegurador_id).first()
+
+def create_asegurador(db: Session, asegurador: schemas.AseguradorCreate):
+    db_asegurador = models.Asegurador(**asegurador.dict())
+    db.add(db_asegurador)
+    db.commit()
+    db.refresh(db_asegurador)
+    return db_asegurador
+
 # Operaciones para Casos
 def get_casos(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Caso).order_by(models.Caso.id).offset(skip).limit(limit).all()
