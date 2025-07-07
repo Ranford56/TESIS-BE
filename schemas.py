@@ -27,6 +27,8 @@ class DocumentoBase(BaseModel):
 class AseguradorBase(BaseModel):
     nombre: str
 
+class AseguradoresBase(BaseModel):
+    nombre: str
 
 # Esquemas para creación
 class ContratanteCreate(ContratanteBase):
@@ -44,19 +46,22 @@ class DocumentoCreate(DocumentoBase):
 class AseguradorCreate(AseguradorBase):
     pass
 
+class AseguradoresCreate(BaseModel):
+    id: str
+
 class CasoBase(BaseModel):
     fecha_incidente: date
     detalles_incidente: str
     danos_visibles: str
     ya_reportado: bool
     numero_poliza: Optional[str]
-    aseguradora: str
 
 class CasoCreate(CasoBase):
     contratantes: List[ContratanteCreate] = []
     asegurados: List[AseguradoCreate] = []
     vehiculos: List[VehiculoCreate] = []
     documentos: List[DocumentoCreate] = []
+    aseguradores: List[AseguradoresCreate] = []
 
 # Esquemas para respuesta
 class Contratante(ContratanteBase):
@@ -84,11 +89,17 @@ class Asegurador(AseguradorBase):
     class Config:
         orm_mode = True
 
+class Aseguradores(AseguradoresBase):
+    id: int
+    class Config:
+        orm_mode = True
+
 class Caso(CasoBase):
     id: int
     contratantes: List[Contratante] = []
     asegurados: List[Asegurado] = []
     vehiculos: List[Vehiculo] = []
     documentos: List[Documento] = []
+    aseguradores: List[Aseguradores] = []
     class Config:
         orm_mode = True

@@ -64,12 +64,11 @@ class Caso(Base):
     ya_reportado = Column(Boolean)
     numero_poliza = Column(String(255))
 
-    contratantes = relationship("Contratante", secondary="caso_contratante", back_populates="casos")
     asegurados = relationship("Asegurado", secondary="caso_asegurado", back_populates="casos")
+    aseguradores = relationship("Asegurador", secondary="caso_asegurador", back_populates="casos")
+    contratantes = relationship("Contratante", secondary="caso_contratante", back_populates="casos")
     vehiculos = relationship("Vehiculo", secondary="caso_vehiculo", back_populates="casos")
     documentos = relationship("Documento", back_populates="caso")
-    aseguradores = relationship("Asegurador", secondary="caso_asegurador", back_populates="casos")
-
 
 class CasoContratante(Base):
     __tablename__ = "caso_contratante"

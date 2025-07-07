@@ -83,7 +83,7 @@ def get_caso(db: Session, caso_id: int):
 
 def create_caso(db: Session, caso: schemas.CasoCreate):
     # Crear el caso principal
-    db_caso = models.Caso(**caso.dict(exclude={"contratantes", "asegurados", "vehiculos", "documentos"}))
+    db_caso = models.Caso(**caso.dict(exclude={"contratantes", "asegurados", "vehiculos", "documentos", "aseguradores"}))
     db.add(db_caso)
     db.commit()
     db.refresh(db_caso)
@@ -107,6 +107,9 @@ def create_caso(db: Session, caso: schemas.CasoCreate):
     for documento in caso.documentos:
         documento.id_caso = db_caso.id
         create_documento(db, documento)
-    
+
+    for aseguradores in caso.aseguradores:
+        db.add(models.CasoAsegurador(id_caso=db_caso.id, id_asegurador=aseguradores.id))
+
     db.commit()
     return db_caso
